@@ -1,0 +1,17 @@
+{
+  "key": "estimate_rollup_v1",
+  "name": "Story Point Rollup",
+  "expression_grammar": {
+    "allowed_sides": [1],
+    "max_term_count": 1,
+    "allow_keep_drop": false
+  },
+  "check_types": ["estimate_rollup"],
+  "outcome_bands": [
+    {"min": null, "max": null, "outcome": "rolled_up"}
+  ],
+  "modifier_resolver": {
+    "estimate_rollup": "fields.child_estimate_sum"
+  },
+  "validators": []
+}

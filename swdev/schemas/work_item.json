@@ -1,0 +1,84 @@
+{
+  "key": "work_item",
+  "definition": {
+    "fields": [
+      {"key": "title", "type": "string", "tags": ["identity"]},
+      {"key": "description", "type": "string", "tags": ["descriptor"]},
+      {"key": "original_estimate", "type": "integer", "minimum": 0, "tags": []},
+      {
+        "key": "remaining_estimate",
+        "type": "integer",
+        "minimum": 0,
+        "tags": ["resource"],
+        "tag_metadata": {"max_ref": "original_estimate", "low_threshold": 1}
+      },
+      {
+        "key": "story_points",
+        "type": "integer",
+        "minimum": 0,
+        "tags": ["progression"],
+        "tag_metadata": {"curve_ref": "velocity_curve_v1"}
+      },
+      {"key": "assignee", "type": "string", "tags": ["relationship"]},
+      {"key": "reviewer", "type": "string", "tags": ["relationship"]},
+      {
+        "key": "labels",
+        "type": "array",
+        "items": "string",
+        "tags": ["status_set"],
+        "enum": ["blocked", "needs_review", "flaky_tests", "at_risk"]
+      }
+    ],
+    "state_machines": [
+      {
+        "key": "lifecycle",
+        "states": [
+          {"key": "backlog", "label_key": "work_item_status.backlog"},
+          {"key": "ready", "label_key": "work_item_status.ready"},
+          {"key": "in_progress", "label_key": "work_item_status.in_progress"},
+          {"key": "in_review", "label_key": "work_item_status.in_review"},
+          {"key": "changes_requested", "label_key": "work_item_status.changes_requested"},
+          {"key": "approved", "label_key": "work_item_status.approved"},
+          {"key": "merged", "label_key": "work_item_status.merged"},
+          {"key": "done", "label_key": "work_item_status.done"},
+          {"key": "blocked", "label_key": "work_item_status.blocked"},
+          {"key": "abandoned", "label_key": "work_item_status.abandoned"}
+        ],
+        "initial": "backlog",
+        "transitions": [
+          {"from": "backlog", "to": "ready", "trigger": "refine"},
+          {"from": "ready", "to": "in_progress", "trigger": "start"},
+          {"from": "in_progress", "to": "in_review", "trigger": "submit_for_review"},
+          {"from": "in_review", "to": "changes_requested", "trigger": "request_changes"},
+          {"from": "in_review", "to": "approved", "trigger": "approve"},
+          {"from": "changes_requested", "to": "in_progress", "trigger": "rework"},
+          {"from": "approved", "to": "merged", "trigger": "merge"},
+          {"from": "merged", "to": "done", "trigger": "close"},
+          {"from": "*", "to": "blocked", "trigger": "block"},
+          {"from": "blocked", "to": "in_progress", "trigger": "unblock"},
+          {"from": "*", "to": "abandoned", "trigger": "abandon"}
+        ]
+      }
+    ],
+    "views": [
+      {
+        "key": "work_item_view",
+        "groups": [
+          {
+            "key": "summary",
+            "label_key": "group.work_item_summary",
+            "field_keys": ["title", "description", "labels"]
+          },
+          {
+            "key": "tracking",
+            "label_key": "group.work_item_tracking",
+            "field_keys": [
+              "remaining_estimate", "original_estimate", "story_points", "assignee", "reviewer"
+            ]
+          }
+        ],
+        "tabs": [{"key": "main", "label_key": "tab.main", "group_keys": ["summary", "tracking"]}]
+      }
+    ]
+  }
+}

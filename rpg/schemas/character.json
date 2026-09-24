@@ -1,0 +1,322 @@
+{
+  "key": "character",
+  "definition": {
+    "fields": [
+      {
+        "key": "strength",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.strength - 10) / 2"
+        }
+      },
+      {
+        "key": "dexterity",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.dexterity - 10) / 2"
+        }
+      },
+      {
+        "key": "constitution",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.constitution - 10) / 2"
+        }
+      },
+      {
+        "key": "intelligence",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.intelligence - 10) / 2"
+        }
+      },
+      {
+        "key": "wisdom",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.wisdom - 10) / 2"
+        }
+      },
+      {
+        "key": "charisma",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "tags": [
+          "attribute",
+          "modifier_source"
+        ],
+        "tag_metadata": {
+          "modifier_formula": "(fields.charisma - 10) / 2"
+        }
+      },
+      {
+        "key": "character_class",
+        "type": "string",
+        "tags": [
+          "identity"
+        ]
+      },
+      {
+        "key": "race",
+        "type": "string",
+        "tags": [
+          "identity"
+        ]
+      },
+      {
+        "key": "max_hit_points",
+        "type": "integer",
+        "minimum": 1,
+        "tags": [
+          "identity"
+        ]
+      },
+      {
+        "key": "hit_points",
+        "type": "integer",
+        "minimum": 0,
+        "tags": [
+          "resource"
+        ],
+        "tag_metadata": {
+          "max_ref": "max_hit_points",
+          "low_threshold": 5
+        }
+      },
+      {
+        "key": "conditions",
+        "type": "array",
+        "items": "string",
+        "tags": [
+          "status_set"
+        ],
+        "enum": [
+          "blinded",
+          "charmed",
+          "deafened",
+          "frightened",
+          "grappled",
+          "incapacitated",
+          "invisible",
+          "paralyzed",
+          "petrified",
+          "poisoned",
+          "prone",
+          "restrained",
+          "stunned"
+        ]
+      },
+      {
+        "key": "xp",
+        "type": "integer",
+        "minimum": 0,
+        "tags": [
+          "progression"
+        ],
+        "tag_metadata": {
+          "curve_ref": "level_curve_v1"
+        }
+      }
+    ],
+    "derived": [
+      {
+        "key": "level",
+        "type": "integer",
+        "expression": "fields.xp / 1000 + 1"
+      }
+    ],
+    "constraints": [
+      {
+        "expression": "fields.hit_points <= fields.max_hit_points",
+        "message": "hit_points cannot exceed max_hit_points"
+      }
+    ],
+    "state_machines": [
+      {
+        "key": "health",
+        "states": [
+          {
+            "key": "healthy",
+            "label_key": "status.healthy"
+          },
+          {
+            "key": "bloodied",
+            "label_key": "status.bloodied"
+          },
+          {
+            "key": "unconscious",
+            "label_key": "status.unconscious"
+          },
+          {
+            "key": "dead",
+            "label_key": "status.dead"
+          }
+        ],
+        "initial": "healthy",
+        "transitions": [
+          {
+            "from": "healthy",
+            "to": "unconscious",
+            "trigger": "damage_taken",
+            "guard": "fields.hit_points <= 0"
+          },
+          {
+            "from": "healthy",
+            "to": "bloodied",
+            "trigger": "damage_taken",
+            "guard": "fields.hit_points <= fields.max_hit_points / 2"
+          },
+          {
+            "from": "bloodied",
+            "to": "unconscious",
+            "trigger": "damage_taken",
+            "guard": "fields.hit_points <= 0"
+          },
+          {
+            "from": "unconscious",
+            "to": "dead",
+            "trigger": "death_save_failed"
+          },
+          {
+            "from": "unconscious",
+            "to": "bloodied",
+            "trigger": "stabilized",
+            "guard": "fields.hit_points > 0"
+          },
+          {
+            "from": "bloodied",
+            "to": "healthy",
+            "trigger": "healed",
+            "guard": "fields.hit_points > fields.max_hit_points / 2"
+          }
+        ]
+      },
+      {
+        "key": "condition",
+        "states": [
+          {
+            "key": "steady",
+            "label_key": "condition.steady"
+          },
+          {
+            "key": "shaken",
+            "label_key": "condition.shaken"
+          },
+          {
+            "key": "panicked",
+            "label_key": "condition.panicked"
+          }
+        ],
+        "initial": "steady",
+        "transitions": [
+          {
+            "from": "steady",
+            "to": "shaken",
+            "trigger": "fright"
+          },
+          {
+            "from": "shaken",
+            "to": "panicked",
+            "trigger": "fright"
+          },
+          {
+            "from": "shaken",
+            "to": "steady",
+            "trigger": "rally"
+          },
+          {
+            "from": "panicked",
+            "to": "shaken",
+            "trigger": "rally"
+          }
+        ]
+      }
+    ],
+    "views": [
+      {
+        "key": "character_sheet",
+        "groups": [
+          {
+            "key": "identity",
+            "label_key": "group.identity",
+            "field_keys": [
+              "race",
+              "character_class"
+            ]
+          },
+          {
+            "key": "attributes",
+            "label_key": "group.attributes",
+            "field_keys": [
+              "strength",
+              "dexterity",
+              "constitution",
+              "intelligence",
+              "wisdom",
+              "charisma"
+            ]
+          },
+          {
+            "key": "vitals",
+            "label_key": "group.vitals",
+            "field_keys": [
+              "hit_points",
+              "max_hit_points",
+              "conditions"
+            ]
+          },
+          {
+            "key": "progression",
+            "label_key": "group.progression",
+            "field_keys": [
+              "xp"
+            ]
+          }
+        ],
+        "tabs": [
+          {
+            "key": "main",
+            "label_key": "tab.main",
+            "group_keys": [
+              "identity",
+              "attributes",
+              "vitals",
+              "progression"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

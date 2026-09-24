@@ -1,0 +1,489 @@
+{
+  "key": "karsh_vale_campaign",
+  "name": "A Campaign in Three Encounters",
+  "definition": {
+    "name": "A Campaign in Three Encounters",
+    "initial_phase": "character_creation",
+    "phases": {
+      "character_creation": {
+        "label_key": "phase.character_creation",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nMake your character by the rules in front of you, not from memory.\n\nRoll every ability score with the `randomizer` tool -- one call per score, the expression the ruleset gives, and `check_type: \"ability_score_roll\"`. That check type exists so the roll takes no modifier: an ability score is the dice and nothing else. Use `check_type: \"hit_die\"` for your hit die, and add your Constitution bonus when you write the sheet rather than expecting the tool to. At first level your maximum hit points are exactly what that roll plus the bonus came to -- `max_hit_points` and `hit_points` are the same number on a new character, and a maximum you did not roll is the one field on the sheet nothing can check for you. If a total comes back that the expression cannot produce, say so and roll again rather than writing it down -- the number is wrong, not the rules. A number you wrote yourself is not a roll, and the table can tell: the record of the roll is what the referee reads, never your sentence about it.\n\nThen call `entity_create` once, schema_key 'character', with `bind_to_self: true` -- that is what makes the sheet yours, so every later roll reads your own scores. Fill the fields the schema asks for and nothing else -- it takes your race as well as your class, and both belong on the sheet rather than only in your description of it. It takes your six ability scores, your `character_class`, and your hit points; it does NOT take a level -- level is derived from experience and setting it is refused, which costs you the whole write. If a field you expect is missing, say so in your turn rather than inventing one: a sheet that will not bind is worth more as a reported problem than as a paragraph claiming it bound.\n\nReferee: state the method the ruleset prescribes and the order to do it in, and then roll nothing. The scores are the player's to roll, on the player's own turn -- a referee who rolls them first leaves that player with a table of numbers and no reason to call the tool, and the sheet never gets made. When the round comes back to you, name anyone who has no sheet yet and say plainly that they have no character until they call `entity_create`. Writing a class and a name in your turn is not a character; the sheet is.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "introductions",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply",
+          "entity_create"
+        ],
+        "max_tool_calls": 20,
+        "requires": {
+          "entities_touched": 1,
+          "on_unmet": "repeat",
+          "max_repeats": 1
+        }
+      },
+      "introductions": {
+        "label_key": "phase.introductions",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nReferee: open the campaign. Where they are, what is wrong here, and what the hook is asking of them. Two or three paragraphs, in the present tense, ending with something that needs an answer.\n\nPlayers: introduce your character by doing something, not by describing yourself. One action or one line of speech that shows us who they are, and a sentence on what they want from this. Speak to each other -- a table where four people monologue at the referee is four people alone.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "first_encounter"
+      },
+      "first_encounter": {
+        "label_key": "phase.first_encounter",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nThe first fight.\n\n**This beat is a fight, and it starts as one.** Your first turn puts the enemy in front of them -- the one your own notes name for this beat, with the numbers they give you. Not a conversation that might lead to a fight, not travel, not a scene with somebody who wants to talk: the thing itself, already here. There is a later beat for people who talk.\n\nThe beat is not finished until the dice have decided something. If this phase ends and the record holds no attack roll, no saving throw and no damage, the fight did not happen, whatever the prose says.\n\nReferee: put something in their way and make it dangerous on its own terms -- what it wants, how it fights, what it does when it starts losing. Call for the rolls the rules require, by name, and resolve each one from the record the tool returns.\n\nPlayers: declare one action a turn. When it needs a roll, make it with the tool and let the number stand -- a described hit that the dice refused is the one thing that makes a fight worthless. Fight like people who can die, because you can.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.\n\n**Finish this beat inside this beat.** When the rounds run out the scene is over, and whatever is still standing resolves now -- they break off, it withdraws, the thing is done, someone drags the wounded clear. Say how it ended in a sentence and let the next scene be the next scene. A fight carried into the following beat eats it: the table spends the beat that was meant to put something new in front of them on more rounds of what they already faced, and the scene that was skipped is not skipped in the record -- it simply never happened.\n",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "npc_interlude",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply"
+        ],
+        "max_tool_calls": 16,
+        "requires": {
+          "resolutions": 3,
+          "on_unmet": "repeat",
+          "max_repeats": 2
+        }
+      },
+      "npc_interlude": {
+        "label_key": "phase.npc_interlude",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nThe scene changes and there are people here.\n\nReferee: move them somewhere new and populate it. Voice each person who speaks as themselves -- name, manner, what they want, what they will not say -- and keep them distinct enough that the players can tell who is talking without being told. At least two of them should want incompatible things.\n\nPlayers: talk to them. Ask for what you need, and notice what you are not being told. Rolls only where the rules call for one -- persuasion is not a substitute for saying the persuasive thing.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.\n\n**Finish this beat inside this beat.** When the rounds run out the scene is over, and whatever is still standing resolves now -- they break off, it withdraws, the thing is done, someone drags the wounded clear. Say how it ended in a sentence and let the next scene be the next scene. A fight carried into the following beat eats it: the table spends the beat that was meant to put something new in front of them on more rounds of what they already faced, and the scene that was skipped is not skipped in the record -- it simply never happened.\n",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "second_encounter",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply"
+        ],
+        "requires": {
+          "messages": 4,
+          "on_unmet": "repeat",
+          "max_repeats": 1
+        }
+      },
+      "second_encounter": {
+        "label_key": "phase.second_encounter",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nThe second fight, and it should not be the first one again.\n\n**This beat is a fight, and it starts as one.** Your first turn puts the enemy in front of them -- the one your own notes name for this beat, with the numbers they give you. Not a conversation that might lead to a fight, not travel, not a scene with somebody who wants to talk: the thing itself, already here. There is a later beat for people who talk.\n\nThe beat is not finished until the dice have decided something. If this phase ends and the record holds no attack roll, no saving throw and no damage, the fight did not happen, whatever the prose says.\n\nReferee: change what the fight is about -- the ground, the numbers, something they have to protect, a reason retreat is worse than standing. Carry forward what the first fight cost them; hit points and spent resources do not reset because a scene did.\n\nPlayers: fight with what you actually have left. Roll for it.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.\n\n**Finish this beat inside this beat.** When the rounds run out the scene is over, and whatever is still standing resolves now -- they break off, it withdraws, the thing is done, someone drags the wounded clear. Say how it ended in a sentence and let the next scene be the next scene. A fight carried into the following beat eats it: the table spends the beat that was meant to put something new in front of them on more rounds of what they already faced, and the scene that was skipped is not skipped in the record -- it simply never happened.\n",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "puzzle",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply"
+        ],
+        "max_tool_calls": 16,
+        "requires": {
+          "resolutions": 3,
+          "on_unmet": "repeat",
+          "max_repeats": 2
+        }
+      },
+      "puzzle": {
+        "label_key": "phase.puzzle",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nSomething here has to be worked out rather than fought.\n\nReferee: set a problem with a real answer -- a mechanism, a riddle, a route past something that cannot be beaten. Say exactly what they can see, and let them think. Do not solve it for them and do not let a single roll replace the thinking; a roll may tell them what a thing is, never what to do about it.\n\nPlayers: reason out loud and try things. Wrong attempts are the point -- they are how the table learns the shape of it.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.\n\n**Finish this beat inside this beat.** When the rounds run out the scene is over, and whatever is still standing resolves now -- they break off, it withdraws, the thing is done, someone drags the wounded clear. Say how it ended in a sentence and let the next scene be the next scene. A fight carried into the following beat eats it: the table spends the beat that was meant to put something new in front of them on more rounds of what they already faced, and the scene that was skipped is not skipped in the record -- it simply never happened.\n",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "boss_fight",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply"
+        ],
+        "requires": {
+          "messages": 4,
+          "on_unmet": "repeat",
+          "max_repeats": 1
+        }
+      },
+      "boss_fight": {
+        "label_key": "phase.boss_fight",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nThe thing this was all leading to.\n\n**This beat is a fight, and it starts as one.** Your first turn puts the enemy in front of them -- the one your own notes name for this beat, with the numbers they give you. Not a conversation that might lead to a fight, not travel, not a scene with somebody who wants to talk: the thing itself, already here. There is a later beat for people who talk.\n\nThe beat is not finished until the dice have decided something. If this phase ends and the record holds no attack roll, no saving throw and no damage, the fight did not happen, whatever the prose says.\n\nReferee: it should be recognisably the campaign's own ending -- it wants what the hook set up, it knows what they did to get here, and it fights better than anything before it. Give it something that makes the fight a problem and not a slog: a second phase, a thing it protects, a cost to hitting it. Roll everything.\n\nPlayers: this is what the characters were for. Spend what you were saving.\n\nYou speak and act only as your own character. The referee voices every other person in the world; if you need one of them to answer you, ask them and stop -- writing their reply yourself takes a turn that was not yours, and the table can no longer tell who actually said what.\n\nReferee: take the referee's turn and only the referee's turn. You voice the world and everyone in it who is not a player character; you never write a player's action, a player's speech, or the outcome of an action they have not declared. If you need to know what somebody does, put them in a position where they have to answer and stop there.\n\nEvery roll comes from the tool. A number you wrote is not a roll and an id you wrote is not a record -- the table reads the record, so an invented id is a claim the record contradicts. If you did not call the tool this turn, do not report a result this turn.\n\n**Finish this beat inside this beat.** When the rounds run out the scene is over, and whatever is still standing resolves now -- they break off, it withdraws, the thing is done, someone drags the wounded clear. Say how it ended in a sentence and let the next scene be the next scene. A fight carried into the following beat eats it: the table spends the beat that was meant to put something new in front of them on more rounds of what they already faced, and the scene that was skipped is not skipped in the record -- it simply never happened.\n",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          },
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        },
+        "on_complete": "epilogue",
+        "tools": [
+          "randomizer",
+          "resolve_and_apply"
+        ],
+        "max_tool_calls": 16,
+        "requires": {
+          "resolutions": 3,
+          "on_unmet": "repeat",
+          "max_repeats": 2
+        }
+      },
+      "epilogue": {
+        "label_key": "phase.epilogue",
+        "prompt": "Every seat at this table reads the same page. Only one paragraph on it is yours: the one addressed to your seat. A paragraph addressed to the referee is not a list of things for a player to do -- a player who audits another player's sheet, calls for a roll, or narrates what the world does has taken the referee's turn, and the table can no longer tell who is running it.\n\nReferee: close it. What the world looks like now, what it cost, and what is left unfinished. Name each character and what specifically they changed -- not a summary of the plot, the mark they left on it.\n\nPlayers: one closing beat each. Where your character goes from here, in a few sentences.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          },
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "guild_lore",
+            "referee_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.45,
+            "lore": 0.45,
+            "misc": 0.1
+          },
+          "max_tokens": 3500,
+          "history_ratio": 0.3
+        }
+      }
+    },
+    "vocabulary_overlay": "rpg_v1"
+  }
+}

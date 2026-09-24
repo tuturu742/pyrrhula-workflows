@@ -1,0 +1,15 @@
+{
+  "key": "character_class",
+  "definition": {
+    "fields": [
+      {"key": "class_name", "type": "string", "tags": ["identity"]},
+      {"key": "hit_die", "type": "string", "tags": ["descriptor"]},
+      {
+        "key": "primary_ability",
+        "type": "string",
+        "tags": ["descriptor"],
+        "enum": ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
+      }
+    ]
+  }
+}

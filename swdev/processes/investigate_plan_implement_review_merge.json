@@ -1,0 +1,216 @@
+{
+  "key": "investigate_plan_implement_review_merge",
+  "name": "Investigate, Plan, Implement, Review, Merge",
+  "definition": {
+    "name": "Investigate, Plan, Implement, Review, Merge",
+    "vocabulary_overlay": "swdev_v1",
+    "initial_phase": "frame",
+    "phases": {
+      "frame": {
+        "label_key": "phase.frame",
+        "prompt": "State the task completely before anyone touches the codebase.\n\nWrite three things and nothing else:\n1. **What is being asked**, in your own words, including the part the request leaves implicit. If the request is ambiguous, say which reading you are taking and why.\n2. **What we do not know yet** -- the specific questions the codebase has to answer before any of this can be planned. Not 'investigate the backend': name the question.\n3. **Who investigates what.** One line per person, by name, with the question they own. Match the question to the seat: a question answered by reading two files goes to a junior, one that needs a judgement about how a subsystem hangs together goes to a senior or above. If your bench is split by domain, the domain owner takes their own domain.\n\nDo not propose a solution here. You do not have the facts yet, and a plan written now is a plan the investigation will be pressured to agree with.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.25,
+            "lore": 0.45,
+            "misc": 0.3
+          },
+          "max_tokens": 5000,
+          "history_ratio": 0.25
+        },
+        "on_complete": "investigate"
+      },
+      "investigate": {
+        "label_key": "phase.investigate",
+        "prompt": "Answer the question you were given, from the codebase itself.\n\nReport in this shape:\n- **Question**: the one you were assigned.\n- **What is actually there**: files and symbols by name, with what each does. Quote the two or three lines that decide the answer.\n- **What this means for the task**: the constraint or the opening you found.\n- **What I could not determine**, if anything, and what would settle it.\n\nRead what the others have already reported before you write. If their finding changes yours -- contradicts it, or makes your question moot -- say so explicitly rather than filing your answer as though you had not seen it. Two reports that quietly disagree cost more than one that admits the conflict.\n\nDo not propose the plan. Do not start building. The finding is the deliverable.",
+        "actors": [
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 6
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.15,
+            "lore": 0.25,
+            "misc": 0.6
+          },
+          "max_tokens": 9000,
+          "history_ratio": 0.3
+        },
+        "on_complete": "plan"
+      },
+      "plan": {
+        "label_key": "phase.plan",
+        "prompt": "The investigation is in. Turn it into work items.\n\nOpen with two sentences naming what the findings changed about your framing -- including anything that turned out to be unnecessary. A plan that matches your first guess exactly is a plan that did not read the reports.\n\nThen, for each piece of work -- at most six -- call the `entity_create` tool once with schema_key 'work_item', a short imperative name, and fields:\n- **title**: the same imperative sentence\n- **description**: the exact files to create or modify, what changes in each, and how a reviewer will know it is done. Fold in what the investigation established, with file and symbol names. A coding agent reads only this -- it cannot see this conversation or the reports in it.\n- **assignee**: leave it out. You will be asked who should build each one.\n\nA '### ' block in prose is not a work item: nothing downstream can delegate it.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.3,
+            "lore": 0.35,
+            "misc": 0.35
+          },
+          "max_tokens": 6000,
+          "history_ratio": 0.3
+        },
+        "on_complete": "implement",
+        "tools": [
+          "entity_create"
+        ]
+      },
+      "implement": {
+        "label_key": "phase.implement",
+        "prompt": "Hand the work items to coding agents. For each one you want built, call `delegate_work_item` with its id -- the ids are in the entity list above, and that call is what makes a branch and a pull request exist. Describing the hand-over instead of performing it leaves the repository untouched.\n\nPass `auto_review: true`. That is what makes your verdict move anything: the review reads the diff against the work item, files a formal approve or request-changes on the pull request under your own identity, and on request-changes sends the item back to its agent with your comments and waits for the rework. A verdict written only in the transcript leaves the item sitting in review for good -- which is exactly what happened while this said `false`.\n\nDelegate every item unless one genuinely depends on another landing first; say which and why if you hold one back. The session then waits for the agents to finish before anyone reviews anything, so you do not need to guess how long they will take.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 1.0
+          },
+          "max_tokens": 2000,
+          "history_ratio": 0.25
+        },
+        "on_complete": "review",
+        "remote_tools": [
+          "delegate_work_item",
+          "get_branch",
+          "get_pull_request"
+        ],
+        "await": {
+          "type": "delegated_work",
+          "timeout": "6h",
+          "on_timeout": "review"
+        }
+      },
+      "review": {
+        "label_key": "phase.review",
+        "prompt": "The reviews are filed and the rework rounds are done. Read what came back.\n\nFor each work item say where it ended up -- approved, or still needing work after its rounds -- and whether you agree with that verdict having looked at the diff yourself. A change that rewrites more than the item asked for is the defect worth catching, and a line count will not show it to you. Disagreeing with an approval is useful: say so and say why, because the next phase decides what merges.\n\nOutput '## Verdict' and one line per pull request: the branch, then 'accept' or 'needs work', then one sentence of reason. If every pull request is acceptable, end your turn with a single line reading 'APPROVED FOR MERGE' so the flow can advance; withhold it while anything still needs work.",
+        "actors": [
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 3
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 1.0
+          },
+          "max_tokens": 3000
+        },
+        "flags": [
+          "mechanical"
+        ],
+        "tools": [
+          "checklist_eval"
+        ],
+        "gates": [
+          {
+            "on": "actor_declares_action",
+            "to": "merge"
+          },
+          {
+            "on": "timeout(72h)",
+            "to": "implement"
+          },
+          {
+            "else": true,
+            "to": "merge"
+          }
+        ]
+      },
+      "merge": {
+        "label_key": "phase.merge",
+        "prompt": "State the merge order for the approved pull requests and why it is that order -- a dependency between them, or a shared file that makes one land first. Note any pull request you are deliberately leaving out. Keep it to a short numbered list and one closing sentence.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        }
+      }
+    }
+  }
+}

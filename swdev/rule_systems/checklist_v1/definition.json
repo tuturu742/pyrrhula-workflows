@@ -1,0 +1,18 @@
+{
+  "key": "checklist_v1",
+  "name": "Definition of Done Checklist",
+  "expression_grammar": {
+    "allowed_sides": [1],
+    "max_term_count": 1,
+    "allow_keep_drop": false
+  },
+  "check_types": ["definition_of_done"],
+  "outcome_bands": [
+    {"min": null, "max": 0, "outcome": "fail"},
+    {"min": 1, "max": null, "outcome": "pass"}
+  ],
+  "modifier_resolver": {
+    "definition_of_done": "(fields.tests_passing && fields.docs_updated && fields.reviewed) ? 1 : -1"
+  },
+  "validators": []
+}

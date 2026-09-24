@@ -1,0 +1,36 @@
+{
+  "schema_key": "character",
+  "entity_data": {
+    "strength": 16,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 8,
+    "max_hit_points": 20,
+    "hit_points": 20,
+    "conditions": [],
+    "xp": 100
+  },
+  "mutation_changes": {
+    "xp": 500
+  },
+  "resolution": {
+    "rule_system_key": "generic_d20",
+    "tool_key": "randomizer",
+    "expression": "1d20+3",
+    "check_type": "strength_check",
+    "actor_fields": {
+      "strength": 16
+    },
+    "target": 10
+  },
+  "transition": {
+    "machine_key": "health",
+    "pre_transition_changes": {
+      "hit_points": 5
+    },
+    "trigger": "damage_taken",
+    "expected_new_state": "bloodied"
+  }
+}

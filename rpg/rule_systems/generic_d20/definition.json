@@ -1,0 +1,45 @@
+{
+  "key": "generic_d20",
+  "name": "Generic d20",
+  "expression_grammar": {
+    "allowed_sides": [
+      4,
+      6,
+      8,
+      10,
+      12,
+      20,
+      100
+    ],
+    "max_term_count": 8,
+    "allow_keep_drop": true
+  },
+  "check_types": [
+    "strength_check",
+    "dexterity_check",
+    "constitution_check",
+    "intelligence_check",
+    "wisdom_check",
+    "charisma_check",
+    "attack_roll",
+    "saving_throw",
+    "skill_check",
+    "initiative",
+    "morale"
+  ],
+  "outcome_bands": [],
+  "modifier_resolver": {
+    "strength_check": "has(fields.strength) ? (fields.strength - 10) / 2 : 0",
+    "dexterity_check": "has(fields.dexterity) ? (fields.dexterity - 10) / 2 : 0",
+    "constitution_check": "has(fields.constitution) ? (fields.constitution - 10) / 2 : 0",
+    "intelligence_check": "has(fields.intelligence) ? (fields.intelligence - 10) / 2 : 0",
+    "wisdom_check": "has(fields.wisdom) ? (fields.wisdom - 10) / 2 : 0",
+    "charisma_check": "has(fields.charisma) ? (fields.charisma - 10) / 2 : 0",
+    "attack_roll": "has(fields.attack_bonus) ? fields.attack_bonus : 0",
+    "saving_throw": "has(fields.save_bonus) ? fields.save_bonus : 0",
+    "skill_check": "has(fields.skill_bonus) ? fields.skill_bonus : 0",
+    "initiative": "has(fields.dexterity) ? (fields.dexterity - 10) / 2 : 0",
+    "morale": "0"
+  },
+  "validators": []
+}

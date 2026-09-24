@@ -1,0 +1,15 @@
+{
+  "pack_id": "rpg_v1",
+  "key": "deception_propensity",
+  "label_key": "axis.deception_propensity",
+  "range_min": 0,
+  "range_max": 100,
+  "default": 0,
+  "stakes": "high",
+  "semantics_md": "How willing the agent is to actively mislead (vs. merely conceal) when a held secret is under pressure -- feeds the disclosure gate's posture output.",
+  "bindings": [
+    {
+      "kind": "gate"
+    }
+  ]
+}

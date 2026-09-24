@@ -1,0 +1,23 @@
+{
+  "key": "rpg",
+  "name": "Tabletop RPG",
+  "overlay_key": "rpg_v1",
+  "persona_type_labels": {
+    "supervisor": "Game Master",
+    "participant": "Player"
+  },
+  "label_overrides": {},
+  "featured_process_keys": [],
+  "capabilities": {
+    "mcp_servers": [
+      {
+        "key": "resolution",
+        "url": "pyrrhula://resolution/{tenant_id}",
+        "enabled_tools": [
+          "randomizer"
+        ],
+        "effectful_tools": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "key": "skill",
+  "definition": {
+    "fields": [
+      {"key": "skill_name", "type": "string", "tags": ["identity"]},
+      {
+        "key": "governing_attribute",
+        "type": "string",
+        "tags": ["relationship"],
+        "enum": ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
+      },
+      {"key": "proficient", "type": "boolean", "tags": ["descriptor"]}
+    ]
+  }
+}

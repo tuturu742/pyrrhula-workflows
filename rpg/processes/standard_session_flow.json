@@ -1,0 +1,205 @@
+{
+  "key": "standard_session_flow",
+  "name": "Standard Session Flow",
+  "definition": {
+    "name": "Standard Session Flow",
+    "vocabulary_overlay": "rpg_v1",
+    "state": {
+      "round": {
+        "type": "integer",
+        "default": 0
+      },
+      "scene_id": {
+        "type": "string",
+        "default": ""
+      },
+      "pending_feedback": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "initial_phase": "facilitator_frame",
+    "phases": {
+      "facilitator_frame": {
+        "label_key": "phase.arbiter_narration",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "facilitator_only",
+            "scholarly_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.3,
+            "lore": 0.6,
+            "misc": 0.1
+          },
+          "max_tokens": 6000
+        },
+        "on_complete": "open_discussion"
+      },
+      "open_discussion": {
+        "label_key": "phase.discussion",
+        "actors": [
+          {
+            "any_of": [
+              "participant_agent",
+              "human_participant"
+            ],
+            "mode": "free",
+            "max_turns": 12
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public",
+            "scholarly_lore"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "lore": 0.8,
+            "misc": 0.2
+          },
+          "max_tokens": 4000,
+          "history_ratio": 0.25
+        },
+        "gates": [
+          {
+            "on": "actor_declares_action",
+            "to": "action_phase"
+          },
+          {
+            "on": "timeout(24h)",
+            "to": "action_phase"
+          }
+        ],
+        "tools": [
+          "entity_create",
+          "resolve_and_apply"
+        ],
+        "flags": [
+          "conductable"
+        ],
+        "prompt": "If you do not have a character sheet yet, create one with entity_create and pass bind_to_self: true -- that is what makes the sheet yours, so later rolls read your own scores. You get one. Anything else you create (an NPC, an item, a faction) is created without bind_to_self."
+      },
+      "action_phase": {
+        "label_key": "phase.turn",
+        "actors": [
+          {
+            "order": "initiative",
+            "from": "entity_field(\"initiative\")",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "held_by_actor"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.75,
+            "lore": 0.25
+          },
+          "max_tokens": 5000
+        },
+        "flags": [
+          "mechanical"
+        ],
+        "tools": [
+          "randomizer"
+        ],
+        "on_complete": "resolution"
+      },
+      "resolution": {
+        "label_key": "phase.resolution",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "effects": [
+          {
+            "set": "round",
+            "to": "state.round + 1"
+          },
+          {
+            "set": "pending_feedback",
+            "to": "state.round % 3 == 0"
+          }
+        ],
+        "gates": [
+          {
+            "when": "state.pending_feedback",
+            "to": "feedback_loop"
+          },
+          {
+            "else": true,
+            "to": "open_discussion"
+          }
+        ]
+      },
+      "feedback_loop": {
+        "label_key": "phase.feedback",
+        "actors": [
+          {
+            "human_participant": "all",
+            "mode": "free"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "await": {
+          "type": "human_input",
+          "timeout": "72h",
+          "on_timeout": "open_discussion"
+        },
+        "on_complete": "open_discussion"
+      }
+    }
+  }
+}

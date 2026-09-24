@@ -1,0 +1,150 @@
+{
+  "key": "plan_implement_review_merge",
+  "name": "Plan, Implement, Review, Merge",
+  "definition": {
+    "name": "Plan, Implement, Review, Merge",
+    "vocabulary_overlay": "swdev_v1",
+    "initial_phase": "plan",
+    "phases": {
+      "plan": {
+        "label_key": "phase.plan",
+        "prompt": "Turn the agenda into a work plan, and create it as real work items.\n\nFor each piece of work -- at most six -- call the `entity_create` tool once with schema_key 'work_item', a short imperative name, and fields:\n- **title**: the same imperative sentence\n- **description**: the exact files to create or modify, what changes in each, and how a reviewer will know it is done. A coding agent reads only this, so it must stand alone -- it cannot see this conversation.\n- **assignee**: leave it out. You will be asked who should build each one.\n\nWrite nothing else. A '### ' block in prose is not a work item: nothing downstream can delegate it, and the turn after this one will have nothing to hand over.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules",
+            "lore",
+            "misc"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 0.4,
+            "lore": 0.5,
+            "misc": 0.1
+          },
+          "max_tokens": 3000,
+          "history_ratio": 0.25
+        },
+        "on_complete": "implement",
+        "tools": [
+          "entity_create"
+        ]
+      },
+      "implement": {
+        "label_key": "phase.implement",
+        "prompt": "Hand the work items to coding agents. For each one you want built, call `delegate_work_item` with its id -- the ids are in the entity list above, and that call is what makes a branch and a pull request exist. Describing the hand-over instead of performing it leaves the repository untouched.\n\nPass `auto_review: true`. That is what makes your verdict move anything: the review reads the diff against the work item, files a formal approve or request-changes on the pull request under your own identity, and on request-changes sends the item back to its agent with your comments and waits for the rework. A verdict written only in the transcript leaves the item sitting in review for good -- which is exactly what happened while this said `false`.\n\nDelegate every item unless one genuinely depends on another landing first; say which and why if you hold one back. The session then waits for the agents to finish before anyone reviews anything, so you do not need to guess how long they will take.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 1.0
+          },
+          "max_tokens": 2000,
+          "history_ratio": 0.25
+        },
+        "on_complete": "review",
+        "remote_tools": [
+          "delegate_work_item",
+          "get_branch",
+          "get_pull_request"
+        ],
+        "await": {
+          "type": "delegated_work",
+          "timeout": "6h",
+          "on_timeout": "review"
+        }
+      },
+      "review": {
+        "label_key": "phase.review",
+        "prompt": "The reviews are filed and the rework rounds are done. Read what came back.\n\nFor each work item say where it ended up -- approved, or still needing work after its rounds -- and whether you agree with that verdict having looked at the diff yourself. A change that rewrites more than the item asked for is the defect worth catching, and a line count will not show it to you. Disagreeing with an approval is useful: say so and say why, because the next phase decides what merges.\n\nOutput '## Verdict' and one line per pull request: the branch, then 'accept' or 'needs work', then one sentence of reason. If every pull request is acceptable, end your turn with a single line reading 'APPROVED FOR MERGE' so the flow can advance; withhold it while anything still needs work.",
+        "actors": [
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 3
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [
+            "rules"
+          ],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {
+            "rules": 1.0
+          },
+          "max_tokens": 3000
+        },
+        "flags": [
+          "mechanical"
+        ],
+        "tools": [
+          "checklist_eval"
+        ],
+        "gates": [
+          {
+            "on": "actor_declares_action",
+            "to": "merge"
+          },
+          {
+            "on": "timeout(72h)",
+            "to": "implement"
+          },
+          {
+            "else": true,
+            "to": "merge"
+          }
+        ]
+      },
+      "merge": {
+        "label_key": "phase.merge",
+        "prompt": "State the merge order for the approved pull requests and why it is that order -- a dependency between them, or a shared file that makes one land first. Note any pull request you are deliberately leaving out. Keep it to a short numbered list and one closing sentence.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [],
+          "scopes": [
+            "workspace_public"
+          ],
+          "entity_fields": "all",
+          "secrets": "none"
+        }
+      }
+    }
+  }
+}

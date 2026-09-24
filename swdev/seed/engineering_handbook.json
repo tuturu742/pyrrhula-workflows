@@ -1,0 +1,39 @@
+{
+  "key": "swdev-engineering-handbook",
+  "name": "Engineering Handbook & Review Rubric",
+  "class": "rules",
+  "entries": [
+    {
+      "entry_key": "definition-of-done",
+      "title": "Definition of Done",
+      "body_md": "A work item is done when: its tests pass, its documentation is updated to reflect the change, and it has been reviewed by someone other than its author. A pull request that fails any of these is not ready to merge, regardless of how urgent the change feels.",
+      "scope_key": "workspace_public",
+      "keys": ["definition of done", "ready to merge"],
+      "constant": false
+    },
+    {
+      "entry_key": "review-rubric",
+      "title": "Review Rubric",
+      "body_md": "A reviewer checks: does the change do what the work item describes, are there tests for the new behavior, is the diff no larger than it needs to be, and does it follow the existing conventions in the surrounding code. A reviewer's job is to catch problems before they reach main, not to rewrite the author's approach to match their own taste.",
+      "scope_key": "workspace_public",
+      "keys": ["review rubric", "code review"],
+      "constant": false
+    },
+    {
+      "entry_key": "merge-policy",
+      "title": "Merge Policy",
+      "body_md": "A pull request may only be merged once its linked build has passed and it has been approved by a reviewer. A failing or in-progress build blocks the merge regardless of how confident the author is that it will pass -- the build result is the fact, not the author's prediction of it.",
+      "scope_key": "workspace_public",
+      "keys": ["merge policy", "build gate"],
+      "constant": false
+    },
+    {
+      "entry_key": "escalation-policy",
+      "title": "Escalation Policy",
+      "body_md": "When a decision is ambiguous, low-cost to delay, or affects more than one team, escalate it to a human reviewer rather than deciding unilaterally. When a decision is unambiguous, low-risk, and blocking other work, make the call yourself and note it in the pull request description.",
+      "scope_key": "workspace_public",
+      "keys": ["escalation", "decision authority"],
+      "constant": false
+    }
+  ]
+}

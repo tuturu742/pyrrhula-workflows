@@ -1,0 +1,56 @@
+{
+  "key": "standup",
+  "name": "Standup",
+  "definition": {
+    "name": "Standup",
+    "vocabulary_overlay": "swdev_v1",
+    "state": {
+      "round": {"type": "integer", "default": 0}
+    },
+    "initial_phase": "status_round",
+    "phases": {
+      "status_round": {
+        "label_key": "phase.status_round",
+        "prompt": "Give your status in three short lines and nothing else: what moved since last time, what you are on next, and what is blocking you (write 'nothing' if nothing is). Name the work item or file you mean rather than describing it in general terms. Do not report on someone else's work, and do not repeat a status already given in this round.",
+        "actors": [
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 1
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": ["rules"],
+          "scopes": ["workspace_public"],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {"rules": 1.0},
+          "max_tokens": 1500
+        },
+        "on_complete": "wrap_up"
+      },
+      "wrap_up": {
+        "label_key": "phase.wrap_up",
+        "prompt": "Close the standup. Output '## Blockers' listing every blocker anyone raised, each with the name of the person who owns clearing it, then '## Next' with at most three lines on what the group does before the next standup. If nobody raised a blocker, say so in one line under '## Blockers' rather than inventing one.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [],
+          "scopes": ["workspace_public"],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "effects": [
+          {"set": "round", "to": "state.round + 1"}
+        ]
+      }
+    }
+  }
+}

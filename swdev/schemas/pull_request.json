@@ -1,0 +1,56 @@
+{
+  "key": "pull_request",
+  "definition": {
+    "fields": [
+      {"key": "title", "type": "string", "tags": ["identity"]},
+      {"key": "work_item_ref", "type": "string", "tags": ["relationship"]},
+      {
+        "key": "build_status",
+        "type": "string",
+        "enum": ["queued", "running", "passed", "failed"],
+        "tags": []
+      }
+    ],
+    "state_machines": [
+      {
+        "key": "lifecycle",
+        "states": [
+          {"key": "draft", "label_key": "pull_request_status.draft"},
+          {"key": "open", "label_key": "pull_request_status.open"},
+          {"key": "changes_requested", "label_key": "pull_request_status.changes_requested"},
+          {"key": "approved", "label_key": "pull_request_status.approved"},
+          {"key": "merged", "label_key": "pull_request_status.merged"},
+          {"key": "closed", "label_key": "pull_request_status.closed"}
+        ],
+        "initial": "draft",
+        "transitions": [
+          {"from": "draft", "to": "open", "trigger": "open"},
+          {"from": "open", "to": "changes_requested", "trigger": "request_changes"},
+          {"from": "changes_requested", "to": "open", "trigger": "resubmit"},
+          {
+            "from": "open",
+            "to": "approved",
+            "trigger": "approve",
+            "guard": "fields.build_status == 'passed'"
+          },
+          {"from": "approved", "to": "merged", "trigger": "merge"},
+          {"from": "open", "to": "closed", "trigger": "close"},
+          {"from": "changes_requested", "to": "closed", "trigger": "close"}
+        ]
+      }
+    ],
+    "views": [
+      {
+        "key": "pull_request_view",
+        "groups": [
+          {
+            "key": "summary",
+            "label_key": "group.pull_request_summary",
+            "field_keys": ["title", "work_item_ref", "build_status"]
+          }
+        ],
+        "tabs": [{"key": "main", "label_key": "tab.main", "group_keys": ["summary"]}]
+      }
+    ]
+  }
+}

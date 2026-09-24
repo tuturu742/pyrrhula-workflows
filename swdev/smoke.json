@@ -1,0 +1,28 @@
+{
+  "schema_key": "work_item",
+  "entity_data": {
+    "title": "Add rate limiting to /api/search",
+    "description": "A smoke work item created by the pack smoke harness.",
+    "original_estimate": 8,
+    "remaining_estimate": 8,
+    "story_points": 5,
+    "assignee": "alice",
+    "reviewer": "bob",
+    "labels": []
+  },
+  "mutation_changes": {"remaining_estimate": 3},
+  "resolution": {
+    "rule_system_key": "checklist_v1",
+    "tool_key": "checklist_eval",
+    "expression": "1d1+1",
+    "check_type": "definition_of_done",
+    "actor_fields": {"tests_passing": true, "docs_updated": true, "reviewed": true},
+    "target": null
+  },
+  "transition": {
+    "machine_key": "lifecycle",
+    "pre_transition_changes": {},
+    "trigger": "refine",
+    "expected_new_state": "ready"
+  }
+}

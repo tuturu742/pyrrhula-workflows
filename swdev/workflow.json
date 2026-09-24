@@ -1,0 +1,27 @@
+{
+  "key": "swdev",
+  "name": "Software Development",
+  "overlay_key": "swdev_v1",
+  "persona_type_labels": {
+    "supervisor": "Lead",
+    "participant": "Engineer"
+  },
+  "label_overrides": {},
+  "featured_process_keys": [],
+  "capabilities": {
+    "mcp_servers": [
+      {
+        "key": "git",
+        "url": "pyrrhula://git",
+        "enabled_tools": [
+          "delegate_work_item",
+          "get_branch",
+          "get_pull_request"
+        ],
+        "effectful_tools": [
+          "delegate_work_item"
+        ]
+      }
+    ]
+  }
+}

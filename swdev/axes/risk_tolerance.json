@@ -1,0 +1,30 @@
+{
+  "pack_id": "swdev_v1",
+  "key": "risk_tolerance",
+  "label_key": "axis.risk_tolerance",
+  "range_min": 0,
+  "range_max": 100,
+  "default": 25,
+  "stakes": "high",
+  "semantics_md": "How willing an engineer/reviewer agent is to accept risk when approving a merge or a production change -- enforced by a gate (E2.5-style), not by the model's own restraint, since a bad merge is consequential and prompt adherence alone is not a control (E2.3's own rationale, exercised here in a third domain).",
+  "bindings": [
+    {
+      "kind": "gate"
+    },
+    {
+      "kind": "prompt_directive",
+      "bands": [
+        {
+          "min": 0,
+          "max": 50,
+          "text": "You are cautious -- you'd rather delay a merge than risk shipping something shaky."
+        },
+        {
+          "min": 51,
+          "max": 100,
+          "text": "You are comfortable shipping with residual risk if the upside is worth it."
+        }
+      ]
+    }
+  ]
+}

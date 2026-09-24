@@ -1,0 +1,54 @@
+{
+  "key": "randomizer",
+  "kind": "deterministic",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "expression": {
+        "type": "string"
+      },
+      "check_type": {
+        "type": "string"
+      },
+      "actor_entity_id": {
+        "type": "string"
+      },
+      "target": {
+        "type": "integer"
+      },
+      "reason": {
+        "type": "string"
+      },
+      "rule_system": {
+        "type": "string",
+        "description": "which of the workspace's registered rule systems to resolve in; omit for its default. A coin flip is the 'coin_flip' system, an ungraded number the 'generic' one."
+      }
+    },
+    "required": [
+      "expression",
+      "check_type"
+    ]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "resolution_id": {
+        "type": "string"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "outcome": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "resolution_id",
+      "total",
+      "outcome"
+    ]
+  },
+  "impl_ref": "builtin:randomizer",
+  "validation_ref": "generic_d20",
+  "determinism": "seeded_random"
+}

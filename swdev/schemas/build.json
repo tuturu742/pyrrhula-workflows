@@ -1,0 +1,49 @@
+{
+  "key": "build",
+  "definition": {
+    "fields": [
+      {"key": "label", "type": "string", "tags": ["identity"]},
+      {"key": "work_item_ref", "type": "string", "tags": ["relationship"]},
+      {
+        "key": "duration_seconds",
+        "type": "integer",
+        "minimum": 0,
+        "tags": ["attribute", "modifier_source"],
+        "tag_metadata": {
+          "modifier_formula": "fields.duration_seconds > 600 ? -1 : 0"
+        }
+      }
+    ],
+    "state_machines": [
+      {
+        "key": "lifecycle",
+        "states": [
+          {"key": "queued", "label_key": "build_status.queued"},
+          {"key": "running", "label_key": "build_status.running"},
+          {"key": "passed", "label_key": "build_status.passed"},
+          {"key": "failed", "label_key": "build_status.failed"}
+        ],
+        "initial": "queued",
+        "transitions": [
+          {"from": "queued", "to": "running", "trigger": "start"},
+          {"from": "running", "to": "passed", "trigger": "succeed"},
+          {"from": "running", "to": "failed", "trigger": "fail"},
+          {"from": "failed", "to": "queued", "trigger": "retry"}
+        ]
+      }
+    ],
+    "views": [
+      {
+        "key": "build_view",
+        "groups": [
+          {
+            "key": "summary",
+            "label_key": "group.build_summary",
+            "field_keys": ["label", "work_item_ref", "duration_seconds"]
+          }
+        ],
+        "tabs": [{"key": "main", "label_key": "tab.main", "group_keys": ["summary"]}]
+      }
+    ]
+  }
+}

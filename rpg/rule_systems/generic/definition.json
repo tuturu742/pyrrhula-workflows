@@ -1,0 +1,15 @@
+{
+  "key": "generic",
+  "name": "Generic Randomizer",
+  "expression_grammar": {
+    "allowed_sides": [2, 3, 4, 6, 8, 10, 12, 20, 100],
+    "max_term_count": 20,
+    "allow_keep_drop": true
+  },
+  "check_types": ["roll"],
+  "outcome_bands": [],
+  "modifier_resolver": {
+    "roll": "0"
+  },
+  "validators": []
+}

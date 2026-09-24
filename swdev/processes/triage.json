@@ -1,0 +1,71 @@
+{
+  "key": "triage",
+  "name": "Work Item Triage",
+  "definition": {
+    "name": "Work Item Triage",
+    "vocabulary_overlay": "swdev_v1",
+    "initial_phase": "propose",
+    "phases": {
+      "propose": {
+        "label_key": "phase.propose",
+        "prompt": "Propose the work you think belongs in the backlog, from the agenda and what you can see of the codebase. One '### ' block per item, at most three from you: a title line, then **Why now:** in one sentence, and **Cost:** as one of small, medium or large.\n\nPropose only work you can point at a reason for. Do not restate an item someone has already proposed this round -- if you agree with one, say so in a line and spend your turn on something new.",
+        "actors": [
+          {
+            "persona_type": "participant",
+            "mode": "generate",
+            "order": "declared",
+            "max_turns": 1
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": ["rules", "lore"],
+          "scopes": ["workspace_public"],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {"rules": 0.5, "lore": 0.5},
+          "max_tokens": 2000
+        },
+        "on_complete": "prioritise"
+      },
+      "prioritise": {
+        "label_key": "phase.prioritise",
+        "prompt": "Order everything proposed into a single ranked list, highest first. One line per item: the title, then one clause saying what it is ranked on -- what it unblocks, what it costs, what breaks without it. Drop anything the agenda puts out of scope and say in one line why you dropped it. No new items.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": ["rules"],
+          "scopes": ["workspace_public"],
+          "entity_fields": "all",
+          "secrets": "none"
+        },
+        "budget": {
+          "ratio": {"rules": 1.0},
+          "max_tokens": 1500
+        },
+        "on_complete": "assign"
+      },
+      "assign": {
+        "label_key": "phase.assign",
+        "prompt": "Assign the ranked items. Output '## Assignments' with one line per item: the title, then the name of one participant on this roster. Assign only items you ranked, give each one exactly one owner, and leave anything nobody on this roster can take unassigned with a one-line note saying what it needs.",
+        "actors": [
+          {
+            "persona_type": "supervisor",
+            "mode": "generate"
+          }
+        ],
+        "visibility": {
+          "knowledge_classes": [],
+          "scopes": ["workspace_public"],
+          "entity_fields": "all",
+          "secrets": "none"
+        }
+      }
+    }
+  }
+}
