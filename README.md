@@ -45,4 +45,4 @@ build from it.
 
 
 Pyrrhula itself, the engine that loads these, is
-[AGPL-3.0-only](https://github.com/tuturu742/pyrrhula).
+[MIT](https://github.com/tuturu742/pyrrhula) as well.
