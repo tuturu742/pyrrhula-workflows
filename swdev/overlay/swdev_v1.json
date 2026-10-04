@@ -33,7 +33,7 @@
     "entity.session": "Working Session",
     "entity.state_machine": "Lifecycle",
     "entity.tenant": "Organization",
-    "entity.workspace": "Repository / Project",
+    "entity.workspace": "Project",
     "group.build_summary": "Summary",
     "group.pull_request_summary": "Summary",
     "group.work_item_summary": "Summary",
