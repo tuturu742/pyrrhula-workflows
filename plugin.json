@@ -1,6 +1,6 @@
 {
   "name": "Pyrrhula core workflows",
-  "description": "The default workflow plugin: tabletop RPG, software development, and enterprise discussion workflows.",
+  "description": "The default workflow plugin: tabletop RPG, software development, and facilitated team workflows.",
   "workflows": [
     "rpg",
     "swdev"
