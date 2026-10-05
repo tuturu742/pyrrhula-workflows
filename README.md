@@ -8,6 +8,14 @@ two specialized workflows as **pure declarative content** — no code, only JSON
 | `rpg` | Tabletop RPG campaigns: Game Master + Players, generic seeded resolution (dice, coins, raw numbers), character schemas with health/condition state machines. A specific ruleset travels with the game that uses it, in a `.pyr` bundle, rather than living here. |
 | `swdev` | Software development: Lead + Engineers, work-item schemas and lifecycle FSM, delegation to coding agents on real repositories with CI and review loops. |
 
+![The rpg workflow's standard session flow in the flow editor: phases, who acts in each, and the transitions](images/rpg-flow.png)
+
+![The swdev workflow's plan → implement → review → merge flow](images/swdev-flow.png)
+
+![The swdev work-item schema with its lifecycle state machine in the schema editor](images/swdev-schema-fsm.png)
+
+![The rpg character schema's health machine: healthy, bloodied, unconscious, dead, with guards on hit points](images/rpg-schema-fsm.png)
+
 ## Structure
 
 ```
