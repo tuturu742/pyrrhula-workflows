@@ -21,7 +21,7 @@
     "entity.entity": "Work Item / Pull Request / Build",
     "entity.entity_schema": "Record Type",
     "entity.knowledge_entry": "Handbook Section",
-    "entity.knowledge_source": "Engineering Handbook / Review Rubric / Runbook",
+    "entity.knowledge_source": "Engineering Handbook / Product Context / Runbook",
     "entity.pack": "Engineering Pack",
     "entity.phase": "Stage",
     "entity.process_definition": "Workflow",
